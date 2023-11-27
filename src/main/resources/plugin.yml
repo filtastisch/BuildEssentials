@@ -1,0 +1,4 @@
+name: BuildEssentials
+version: '${project.version}'
+main: eu.filtastisch.buildessentials.BuildEssentials
+api-version: '1.19'
