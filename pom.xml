@@ -61,6 +61,10 @@
             <id>sonatype</id>
             <url>https://oss.sonatype.org/content/groups/public/</url>
         </repository>
+        <repository>
+            <id>tsc</id>
+            <url>https://repo.thesourcecoders.de/repository/minecraft/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -75,6 +79,11 @@
             <artifactId>commandapi-bukkit-core</artifactId>
             <version>9.1.0</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>de.tsc.api</groupId>
+            <artifactId>capi</artifactId>
+            <version>5.3.3</version>
         </dependency>
     </dependencies>
 </project>

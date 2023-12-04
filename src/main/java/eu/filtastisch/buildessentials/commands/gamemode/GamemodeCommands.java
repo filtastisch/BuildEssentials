@@ -17,6 +17,10 @@ public class GamemodeCommands {
 
     public GamemodeCommands() {
         this.registerOtherCommands();
+        this.registerGamemodeCommand();
+    }
+
+    public void registerGamemodeCommand(){
         new CommandAPICommand("gm")
                 .withPermission("buildessentials.command.gm")
                 .withArguments(new StringArgument("gamemode")
@@ -29,17 +33,8 @@ public class GamemodeCommands {
                     Player otherPlayer = (Player) args.get("player");
                     if (otherPlayer == null){
                         if (sender instanceof Player){
-                            Player p = (Player) sender;
                             assert gamemode != null;
-                            if (gamemode.equalsIgnoreCase("creative") || gamemode.equalsIgnoreCase("1")){
-                                p.setGameMode(GameMode.CREATIVE);
-                            } else if (gamemode.equalsIgnoreCase("spectator") || gamemode.equalsIgnoreCase("2")){
-                                p.setGameMode(GameMode.SPECTATOR);
-                            } else if (gamemode.equalsIgnoreCase("adventure") || gamemode.equalsIgnoreCase("3")){
-                                p.setGameMode(GameMode.ADVENTURE);
-                            } else if (gamemode.equalsIgnoreCase("survival") || gamemode.equalsIgnoreCase("0")){
-                                p.setGameMode(GameMode.SURVIVAL);
-                            }
+                            Player p = setPlayerGamemode((Player) sender, gamemode);
                             p.sendMessage("§dEternalBuild §7| §aGamemode updated to §e" + p.getGameMode().name());
                         }
                     } else {
@@ -56,6 +51,20 @@ public class GamemodeCommands {
                         sender.sendMessage("§dEternalBuild §7| §aGamemode of §e" + otherPlayer.getName()+ "§a updated to §e" + otherPlayer.getGameMode().name());
                     }
                 }).register();
+    }
+
+    private static Player setPlayerGamemode(Player sender, String gamemode) {
+        assert gamemode != null;
+        if (gamemode.equalsIgnoreCase("creative") || gamemode.equalsIgnoreCase("1")){
+            sender.setGameMode(GameMode.CREATIVE);
+        } else if (gamemode.equalsIgnoreCase("spectator") || gamemode.equalsIgnoreCase("2")){
+            sender.setGameMode(GameMode.SPECTATOR);
+        } else if (gamemode.equalsIgnoreCase("adventure") || gamemode.equalsIgnoreCase("3")){
+            sender.setGameMode(GameMode.ADVENTURE);
+        } else if (gamemode.equalsIgnoreCase("survival") || gamemode.equalsIgnoreCase("0")){
+            sender.setGameMode(GameMode.SURVIVAL);
+        }
+        return sender;
     }
 
     public void registerOtherCommands() {
