@@ -11,10 +11,18 @@ import eu.filtastisch.buildessentials.utils.warp.Warp;
 import eu.filtastisch.buildessentials.utils.warp.WarpManager;
 import eu.filtastisch.buildessentials.utils.warp.WarpToolbarBuilder;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentBuilder;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.jetbrains.annotations.NotNull;
+
+import java.awt.*;
+import java.util.Objects;
 
 public class WarpCommand {
 
@@ -50,14 +58,52 @@ public class WarpCommand {
         this.warpCommand.executes((sender, args) -> {
             if (sender instanceof Player){
                 Player p = (Player) sender;
+
                 String warpName = (String) args.get("Warp Name");
                 Warp warp = WarpManager.getWarp(warpName);
                 if (warp == null){
                     p.sendMessage(Component.text(plugin.getPrefix() + "§cWarp §e" + warpName + "§c existiert nicht!"));
                     return;
                 }
-                p.teleport(WarpManager.getWarp(warpName).getLocation());
-                p.sendMessage(Component.text(plugin.getPrefix() + "§aDu wurdest nach §e" + warpName + "§a teleportiert!"));
+                this.handleTeleport(WarpManager.getWarp(warpName), p);
+
+                assert warpName != null;
+                TextComponent message = Component.text(this.plugin.getPrefix())
+                        .append(Component.text("Du wurdest nach ").color(TextColor.color(0xC34A)))
+                        .append(Component.text(warpName).hoverEvent(HoverEvent.showText(
+                                Component.text().append(
+                                        Component.text()
+                                                .append(Component.text("Creator: ").color(TextColor.color(0x16C3B0)))
+                                                .append(Component.text(Objects.requireNonNull(Bukkit.getOfflinePlayer(warp.getCreator()).getName())).color(TextColor.color(0xB4A407)))
+                                                .appendNewline()
+                                ).append(
+                                        Component.text()
+                                                .append(Component.text("Location: ").color(TextColor.color(0x16C3B0)))
+                                                .appendNewline()
+                                ).append(
+                                        Component.text()
+                                                .append(Component.text("   ├ World: ").color(TextColor.color(0x16C3B0)))
+                                                .append(Component.text(warp.getLocation().getWorld().getName()).color(TextColor.color(0xC34A)))
+                                                .appendNewline()
+                                ).append(
+                                        Component.text()
+                                                .append(Component.text("   ├ X: ").color(TextColor.color(0x16C3B0)))
+                                                .append(Component.text(warp.getLocation().getBlockX()).color(TextColor.color(0xB4A407)))
+                                                .appendNewline()
+                                ).append(
+                                        Component.text()
+                                                .append(Component.text("   ├ Y: ").color(TextColor.color(0x16C3B0)))
+                                                .append(Component.text(warp.getLocation().getBlockY()).color(TextColor.color(0xB4A407)))
+                                                .appendNewline()
+                                ).append(
+                                        Component.text()
+                                                .append(Component.text("   └ Z: ").color(TextColor.color(0x16C3B0)))
+                                                .append(Component.text(warp.getLocation().getBlockZ()).color(TextColor.color(0xB4A407)))
+                                )
+                        )).color(TextColor.color(0xB4A407)))
+                        .append(Component.text(" teleportiert!").color(TextColor.color(0xC34A)));
+
+                p.sendMessage(message);
             }
         });
     }
@@ -104,10 +150,22 @@ public class WarpCommand {
             if (sender instanceof Player){
                 Player p = (Player) sender;
                 String warpName = (String) args.get("Warp Name");
-                String returnMessage = WarpManager.deleteWarp(warpName) ?
-                        plugin.getPrefix() + "§aWarp §e" + warpName + "§a wurde gelöscht!" :
-                        plugin.getPrefix() + "§cWarp §e" + warpName + "§c existiert nicht!";
-                p.sendMessage(Component.text(returnMessage));
+                TextComponent builder = Component.text(this.plugin.getPrefix());
+                TextComponent state;
+                if (WarpManager.deleteWarp(warpName)) {
+                    assert warpName != null;
+                    state = builder
+                            .append(Component.text("Warp ").color(TextColor.color(0xC34A)))
+                            .append(Component.text(warpName).color(TextColor.color(0xB4A407)))
+                            .append(Component.text(" wurde gelöscht!").color(TextColor.color(0xC34A)));
+                } else {
+                    assert warpName != null;
+                    state = builder
+                            .append(Component.text("Warp ").color(TextColor.color(0x9D3025)))
+                            .append(Component.text(warpName).color(TextColor.color(0xB4A407)))
+                            .append(Component.text(" existiert nicht!").color(TextColor.color(0x9D3025)));
+                }
+                p.sendMessage(state);
             }
         });
     }
@@ -133,13 +191,20 @@ public class WarpCommand {
                     )
                     .create()
             ).withListener((InventoryClickEvent e) -> {
-                p.teleport(c.getLocation());
+                this.handleTeleport(c, p);
                 p.sendMessage(Component.text(plugin.getPrefix() + "§aDu wurdest nach §e" + c.getWarpName() + "§a teleportiert!"));
             });
-            menu.addButton(warp);
+            if (p.hasPermission(c.getPermission())) {
+                menu.addButton(warp);
+            }
         });
 
         p.openInventory(menu.getInventory());
+    }
+
+    public void handleTeleport(Warp warp, Player p){
+        if (p.hasPermission(warp.getPermission()))
+            p.teleport(warp.getLocation());
     }
 
 }
