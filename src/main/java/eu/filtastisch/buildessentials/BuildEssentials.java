@@ -1,5 +1,11 @@
 package eu.filtastisch.buildessentials;
 
+import com.samjakob.spigui.SpiGUI;
+import com.samjakob.spigui.buttons.SGButton;
+import com.samjakob.spigui.menu.SGMenu;
+import com.samjakob.spigui.toolbar.SGToolbarBuilder;
+import com.samjakob.spigui.toolbar.SGToolbarButtonType;
+import de.thesourcecoders.capi.spigot.GuiManager;
 import de.thesourcecoders.capi.spigot.SpigotConfig;
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPIBukkitConfig;
@@ -12,6 +18,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 import java.util.logging.Level;
 
 public final class BuildEssentials extends JavaPlugin {
@@ -25,19 +34,25 @@ public final class BuildEssentials extends JavaPlugin {
     @Getter
     private final String prefix = "§dEternalBuild §7| ";
 
+    @Getter
+    private List<UUID> openWarpGUIList;
+
+    @Getter
+    private SpiGUI spiGUI;
 
     @Override
     public void onLoad() {
         instance = this;
         CommandAPI.onLoad(new CommandAPIBukkitConfig(this).verboseOutput(true));
-        this.loadCommands();
-        this.loadConfig();
-        this.loadWarps();
     }
 
     @Override
     public void onEnable() {
         CommandAPI.onEnable();
+        this.loadValues();
+        this.loadCommands();
+        this.loadConfig();
+        this.loadWarps();
     }
 
     @Override
@@ -51,6 +66,12 @@ public final class BuildEssentials extends JavaPlugin {
         new WarpCommand();
     }
 
+    public void loadValues(){
+        this.openWarpGUIList = new ArrayList<>();
+        this.spiGUI = new SpiGUI(this);
+
+    }
+
     public void loadConfig(){
         this.warpsConfig = new SpigotConfig(this, "warps.yml", true).register();
     }
@@ -61,7 +82,13 @@ public final class BuildEssentials extends JavaPlugin {
         for (String warpKey : this.warpsConfig.getConfigurationSection("warps").getKeys(false)){
             if (this.warpsConfig.getLocation("warps." + warpKey) == null)
                 return;
-            String addedWarp = WarpManager.addWarp(warpKey, this.warpsConfig.getLocation("warps." + warpKey)) ? "Warp " + warpKey + " konnte nicht geladen werden" : "Warp " + warpKey + " wurde geladen";
+            String addedWarp = WarpManager
+                    .addWarp(warpKey,
+                            this.warpsConfig.getLocation("warps." + warpKey + ".location"),
+                            this.warpsConfig.getString("warps." + warpKey + ".permission"),
+                            this.warpsConfig.getString("warps." + warpKey + ".creator"))
+                    ? "Warp " + warpKey + " wurde geladen"
+                    : "Warp " + warpKey + " konnte nicht geladen werden";
             Bukkit.getLogger().log(Level.INFO, addedWarp);
         }
     }

@@ -65,6 +65,10 @@
             <id>tsc</id>
             <url>https://repo.thesourcecoders.de/repository/minecraft/</url>
         </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -84,6 +88,11 @@
             <groupId>de.tsc.api</groupId>
             <artifactId>capi</artifactId>
             <version>5.3.3</version>
+        </dependency>
+        <dependency>
+            <groupId>com.samjakob</groupId>
+            <artifactId>SpiGUI</artifactId>
+            <version>1.3.1</version>
         </dependency>
     </dependencies>
 </project>

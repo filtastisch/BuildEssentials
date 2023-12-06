@@ -6,6 +6,7 @@ import org.bukkit.Location;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class WarpManager {
@@ -17,20 +18,22 @@ public class WarpManager {
         return allWarps.stream().map(Warp::getWarpName).collect(Collectors.toList());
     }
 
-    public static boolean addWarp(String name, Location loc){
+    public static boolean addWarp(String name, Location loc, String perm, String uuid){
         if (exists(name))
             return false;
 
-        allWarps.add(new Warp(loc, name));
+        allWarps.add(new Warp(loc, name, perm, UUID.fromString(uuid)));
         return true;
     }
 
-    public static boolean safeAddWarp(String name, Location loc){
+    public static boolean safeAddWarp(String name, Location loc, String perm, UUID uuid){
         if (exists(name))
             return false;
 
-        allWarps.add(new Warp(loc, name));
-        BuildEssentials.getInstance().getWarpsConfig().setLocation("warps." + name, loc);
+        allWarps.add(new Warp(loc, name, perm, uuid));
+        BuildEssentials.getInstance().getWarpsConfig().setLocation("warps." + name + ".location", loc);
+        BuildEssentials.getInstance().getWarpsConfig().set("warps." + name + ".creator", uuid.toString());
+        BuildEssentials.getInstance().getWarpsConfig().set("warps." + name + ".permission", perm);
         BuildEssentials.getInstance().getWarpsConfig().save();
         return true;
     }
