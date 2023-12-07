@@ -2,19 +2,12 @@ package eu.filtastisch.buildessentials.commands.gamemode;
 
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.arguments.ArgumentSuggestions;
-import dev.jorel.commandapi.arguments.IntegerArgument;
 import dev.jorel.commandapi.arguments.PlayerArgument;
 import dev.jorel.commandapi.arguments.StringArgument;
-import eu.filtastisch.buildessentials.BuildEssentials;
-import net.kyori.adventure.text.Component;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 
 public class GamemodeCommands {
-
-    private final BuildEssentials plugin = BuildEssentials.getInstance();
-    private CommandAPICommand gmCommand;
-
     public GamemodeCommands() {
         this.registerOtherCommands();
         this.registerGamemodeCommand();
@@ -74,8 +67,7 @@ public class GamemodeCommands {
                 .executes((sender, args) -> {
                     Player target = (Player) args.get("player");
                     if (target == null) {
-                        if (sender instanceof Player) {
-                            Player p = (Player) sender;
+                        if (sender instanceof Player p) {
                             p.setGameMode(GameMode.CREATIVE);
                             p.sendMessage("§dEternalBuild §7| §aGamemode updated to §e" + p.getGameMode().name());
                         }
@@ -91,8 +83,7 @@ public class GamemodeCommands {
                 .executes((sender, args) -> {
                     Player target = (Player) args.get("player");
                     if (target == null) {
-                        if (sender instanceof Player) {
-                            Player p = (Player) sender;
+                        if (sender instanceof Player p) {
                             p.setGameMode(GameMode.SURVIVAL);
                             p.sendMessage("§dEternalBuild §7| §aGamemode updated to §e" + p.getGameMode().name());
                         }
@@ -108,8 +99,7 @@ public class GamemodeCommands {
                 .executes((sender, args) -> {
                     Player target = (Player) args.get("player");
                     if (target == null) {
-                        if (sender instanceof Player) {
-                            Player p = (Player) sender;
+                        if (sender instanceof Player p) {
                             p.setGameMode(GameMode.ADVENTURE);
                             p.sendMessage("§dEternalBuild §7| §aGamemode updated to §e" + p.getGameMode().name());
                         }
@@ -125,8 +115,7 @@ public class GamemodeCommands {
                 .executes((sender, args) -> {
                     Player target = (Player) args.get("player");
                     if (target == null) {
-                        if (sender instanceof Player) {
-                            Player p = (Player) sender;
+                        if (sender instanceof Player p) {
                             p.setGameMode(GameMode.SPECTATOR);
                             p.sendMessage("§dEternalBuild §7| §aGamemode updated to §e" + p.getGameMode().name());
                         }

@@ -7,21 +7,18 @@ import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.arguments.ArgumentSuggestions;
 import dev.jorel.commandapi.arguments.StringArgument;
 import eu.filtastisch.buildessentials.BuildEssentials;
+import eu.filtastisch.buildessentials.utils.chat.DefaultColors;
 import eu.filtastisch.buildessentials.utils.warp.Warp;
 import eu.filtastisch.buildessentials.utils.warp.WarpManager;
 import eu.filtastisch.buildessentials.utils.warp.WarpToolbarBuilder;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.ComponentBuilder;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.HoverEvent;
-import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
 import java.util.Objects;
 
 public class WarpCommand {
@@ -56,9 +53,7 @@ public class WarpCommand {
                 ArgumentSuggestions.strings(info -> WarpManager.getWarpNames().toArray(new String[0]))
         ));
         this.warpCommand.executes((sender, args) -> {
-            if (sender instanceof Player){
-                Player p = (Player) sender;
-
+            if (sender instanceof Player p){
                 String warpName = (String) args.get("Warp Name");
                 Warp warp = WarpManager.getWarp(warpName);
                 if (warp == null){
@@ -69,39 +64,39 @@ public class WarpCommand {
 
                 assert warpName != null;
                 TextComponent message = Component.text(this.plugin.getPrefix())
-                        .append(Component.text("Du wurdest nach ").color(TextColor.color(0xC34A)))
+                        .append(Component.text("Du wurdest nach ").color(DefaultColors.LIME))
                         .append(Component.text(warpName).hoverEvent(HoverEvent.showText(
                                 Component.text().append(
                                         Component.text()
-                                                .append(Component.text("Creator: ").color(TextColor.color(0x16C3B0)))
-                                                .append(Component.text(Objects.requireNonNull(Bukkit.getOfflinePlayer(warp.getCreator()).getName())).color(TextColor.color(0xB4A407)))
+                                                .append(Component.text("Creator: ").color(DefaultColors.AQUA))
+                                                .append(Component.text(Objects.requireNonNull(Bukkit.getOfflinePlayer(warp.getCreator()).getName())).color(DefaultColors.GOLD))
                                                 .appendNewline()
                                 ).append(
                                         Component.text()
-                                                .append(Component.text("Location: ").color(TextColor.color(0x16C3B0)))
+                                                .append(Component.text("Location: ").color(DefaultColors.AQUA))
                                                 .appendNewline()
                                 ).append(
                                         Component.text()
-                                                .append(Component.text("   ├ World: ").color(TextColor.color(0x16C3B0)))
-                                                .append(Component.text(warp.getLocation().getWorld().getName()).color(TextColor.color(0xC34A)))
+                                                .append(Component.text("   ├ World: ").color(DefaultColors.AQUA))
+                                                .append(Component.text(warp.getLocation().getWorld().getName()).color(DefaultColors.LIME))
                                                 .appendNewline()
                                 ).append(
                                         Component.text()
-                                                .append(Component.text("   ├ X: ").color(TextColor.color(0x16C3B0)))
-                                                .append(Component.text(warp.getLocation().getBlockX()).color(TextColor.color(0xB4A407)))
+                                                .append(Component.text("   ├ X: ").color(DefaultColors.AQUA))
+                                                .append(Component.text(warp.getLocation().getBlockX()).color(DefaultColors.GOLD))
                                                 .appendNewline()
                                 ).append(
                                         Component.text()
-                                                .append(Component.text("   ├ Y: ").color(TextColor.color(0x16C3B0)))
-                                                .append(Component.text(warp.getLocation().getBlockY()).color(TextColor.color(0xB4A407)))
+                                                .append(Component.text("   ├ Y: ").color(DefaultColors.AQUA))
+                                                .append(Component.text(warp.getLocation().getBlockY()).color(DefaultColors.GOLD))
                                                 .appendNewline()
                                 ).append(
                                         Component.text()
-                                                .append(Component.text("   └ Z: ").color(TextColor.color(0x16C3B0)))
-                                                .append(Component.text(warp.getLocation().getBlockZ()).color(TextColor.color(0xB4A407)))
+                                                .append(Component.text("   └ Z: ").color(DefaultColors.AQUA))
+                                                .append(Component.text(warp.getLocation().getBlockZ()).color(DefaultColors.GOLD))
                                 )
-                        )).color(TextColor.color(0xB4A407)))
-                        .append(Component.text(" teleportiert!").color(TextColor.color(0xC34A)));
+                        )).color(DefaultColors.GOLD))
+                        .append(Component.text(" teleportiert!").color(DefaultColors.LIME));
 
                 p.sendMessage(message);
             }
@@ -113,8 +108,7 @@ public class WarpCommand {
         this.warpsCommand.withPermission("buildessentials.command.warps");
         this.warpsCommand.withAliases("warplist", "warpl");
         this.warpsCommand.executes((sender, args) -> {
-            if (sender instanceof Player){
-                Player p = (Player) sender;
+            if (sender instanceof Player p){
                 this.openWarpGUI(p);
             }
         });
@@ -126,8 +120,7 @@ public class WarpCommand {
         this.setWarpCommand.withArguments(new StringArgument("Warp Name"));
         this.setWarpCommand.withOptionalArguments(new StringArgument("Permission to Use"));
         this.setWarpCommand.executes((sender, args) -> {
-            if (sender instanceof Player){
-                Player p = (Player) sender;
+            if (sender instanceof Player p){
                 String warpName = (String) args.get("Warp Name");
                 String permission = (String) args.get("Permission to Use");
                 if (permission == null)
@@ -147,23 +140,22 @@ public class WarpCommand {
                 ArgumentSuggestions.strings(WarpManager.getWarpNames())
         ));
         this.delWarpCommand.executes((sender, args) -> {
-            if (sender instanceof Player){
-                Player p = (Player) sender;
+            if (sender instanceof Player p){
                 String warpName = (String) args.get("Warp Name");
                 TextComponent builder = Component.text(this.plugin.getPrefix());
                 TextComponent state;
                 if (WarpManager.deleteWarp(warpName)) {
                     assert warpName != null;
                     state = builder
-                            .append(Component.text("Warp ").color(TextColor.color(0xC34A)))
-                            .append(Component.text(warpName).color(TextColor.color(0xB4A407)))
-                            .append(Component.text(" wurde gelöscht!").color(TextColor.color(0xC34A)));
+                            .append(Component.text("Warp ").color(DefaultColors.LIME))
+                            .append(Component.text(warpName).color(DefaultColors.GOLD))
+                            .append(Component.text(" wurde gelöscht!").color(DefaultColors.LIME));
                 } else {
                     assert warpName != null;
                     state = builder
-                            .append(Component.text("Warp ").color(TextColor.color(0x9D3025)))
-                            .append(Component.text(warpName).color(TextColor.color(0xB4A407)))
-                            .append(Component.text(" existiert nicht!").color(TextColor.color(0x9D3025)));
+                            .append(Component.text("Warp ").color(DefaultColors.RED))
+                            .append(Component.text(warpName).color(DefaultColors.GOLD))
+                            .append(Component.text(" existiert nicht!").color(DefaultColors.RED));
                 }
                 p.sendMessage(state);
             }
@@ -172,7 +164,7 @@ public class WarpCommand {
 
     public void openWarpGUI(Player p){
         this.plugin.getOpenWarpGUIList().add(p.getUniqueId());
-        SGMenu menu = this.plugin.getSpiGUI().create("§aEternal Warp GUI", 6);
+        SGMenu menu = this.plugin.getSpiGUI().create("§2Eternal Warp GUI §6Page: §9{currentPage}§7/§d{maxPage}", 6);
         menu.setAutomaticPaginationEnabled(true);
         menu.setRowsPerPage(5);
 
